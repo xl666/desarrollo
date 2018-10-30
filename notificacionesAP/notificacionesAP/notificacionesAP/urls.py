@@ -19,6 +19,7 @@ from django.conf.urls import url
 
 urlpatterns = [
     url(r'^bitacora/', bitacora),
+    url(r'^$', bitacora),
     url(r'^guardarMensaje/', guardarMensaje),
     url(r'^ultimoMensaje/', ultimoMensaje),
 ]

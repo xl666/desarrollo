@@ -97,6 +97,7 @@ Numero de clientes: %s
             for ip in clientesSet:
                 if not ip in conocidos:
                     conocidos.add(ip)
+                    print('Esta es la IP:', ip)
                     nombre = self.pedirNombre(ip)
                     ipsNombres[ip] = nombre
                 if ip not in anterior: # recien conectado
