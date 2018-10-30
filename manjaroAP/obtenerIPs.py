@@ -2,7 +2,7 @@
 """
 Este script obtiene las direcciones IP de una lista de sitios, esto para ponerlos en lista blanca del firewall
 
-El archivo de URLS debe ser una url por linea, cada url debe llevar protocolo y terminar con /
+El archivo de URLS debe ser una url por linea, cada url debe llevar protocolo 
 """
 
 import urllib.request as rq
@@ -104,6 +104,8 @@ def procesarUrls(archivo):
     with open(archivo) as paginas:
         for linea in paginas:
             limpia = linea.strip()
+            if not limpia.endswith('/'):
+                limpia += '/'
             urls.append(regresarDominio(limpia))
             urls += extraerReferenciasURL(limpia)
     #ips = hacerDig(set(urls))
