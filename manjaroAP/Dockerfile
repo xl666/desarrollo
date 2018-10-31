@@ -3,8 +3,8 @@ FROM jonathonf/manjaro
 RUN pacman -Syy \  
     && pacman -S --noconfirm grep which create_ap gawk glibc wireless_tools net-tools \
     && rm -rf /var/cache/pacman/pkg/*
-ENV IWIRELESS wlan0 # interfaz donde estará el AP
-ENV IINTERNET eth0 
+ENV IWIRELESS wlo1 # interfaz donde estará el AP
+ENV IINTERNET wlo1 
 ENV ESSID manjaroAP
 ENV PASS 12345678
 ENV RESTRICTEDMODE ""

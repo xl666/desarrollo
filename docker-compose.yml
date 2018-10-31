@@ -1,0 +1,22 @@
+version: '3'
+services:
+  accesspoint:
+    build: ./manjaroAP
+    network_mode: "host"
+    privileged: true
+    environment:
+      - IWIRELESS=wlo1
+      - IINTERNET=wlo1
+      - ESSID=prueba
+      - PASS=12345678
+      - ALUMNSMACS=${MACS}
+      - WHITEURLS=${WHITES}
+  monitor:
+    build: ./monitorAP
+    network_mode: "host"
+    ports:
+      - "9595:9595"
+  notificaciones:
+    build: ./notificacionesAP
+    ports:
+      - "8000:8000"

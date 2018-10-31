@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "exitooo" > /tmp/ap.txt
-[[ $ALUMNSMACS ]] || exit 1
+[[ $ALUMNSMACS ]] || exit 1 #no tiene sentido lanzar servicio sin macs
 #tratar de obtener nombre ap
 function nombreAP() {
     local deInter=""
@@ -21,4 +21,4 @@ function nombreAP() {
 
 ap=$(nombreAP)
 echo "$ap" > /tmp/ap.txt
-python servicioIPAlumno.py /tmp/macs.txt $ap $IPSERVICEPORT
+python -u servicioIPAlumno.py /tmp/macs.txt $ap $IPSERVICEPORT

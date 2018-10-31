@@ -1,5 +1,13 @@
 #!/bin/bash
 
+function forzarCanal() {
+    ifconfig $IWIRELESS down
+    iwconfig $IWIRELESS mode monitor
+    ifconfig $IWIRELESS up
+    iwconfig $IWIRELESS channel $CHANNEL
+}
+
+
 echo "Iniciando AP"
 
 [[ "$ALUMNSMACS" ]] && echo "$ALUMNSMACS" > /tmp/macs.txt
@@ -8,7 +16,15 @@ echo "Lanzando servicio de nombres..."
 ./runServicioIP.sh &
 
 
-[[ ! $RESTRICTEDMODE ]] && { create_ap  "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS"; exit 0; }
+if [ ! $RESTRICTEDMODE ]; then
+    if [ $FORCECHANNEL ]; then
+	forzarCanal
+	create_ap -c $CHANNEL "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS";
+	exit 0;
+    fi
+    create_ap  "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS";
+    exit 0;
+fi
 
 iptables -F
 iptables -P INPUT ACCEPT
@@ -29,10 +45,7 @@ iptables -A FORWARD -j REJECT
 #forzar trabajo en channel 1
 #cuidado, algunos adaptadores no se vuelven a encender
 if [ $FORCECHANNEL ]; then
-    ifconfig $IWIRELESS down
-    iwconfig $IWIRELESS mode monitor
-    ifconfig $IWIRELESS up
-    iwconfig $IWIRELESS channel $CHANNEL
+    forzarCanal
 fi
 
 # lanzar servicio de obtencion de nombres por IP
