@@ -11,6 +11,8 @@ services:
       - PASS=12345678
       - ALUMNSMACS=${MACS}
       - WHITEURLS=${WHITES}
+      - FORCECHANNEL=true
+      - CHANNEL=1
   monitor:
     build: ./monitorAP
     network_mode: "host"

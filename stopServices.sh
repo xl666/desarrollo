@@ -9,7 +9,9 @@ if [ $nombreAccess ]; then
     # obtener pid de create_ap
     pid=$(docker exec $nombreAccess /bin/bash -c 'create_ap --list-running' | egrep $ap | egrep -o "^[0-9]+")
     # detener accesspoint de forma limpia
-    docker exec $nombreAccess /bin/bash -c 'create_ap --stop $pid'
+    docker exec $nombreAccess /bin/bash -c "create_ap --stop $pid" || { echo "Hubo un problema deteniendo el access point, no se ha detenido nada"; exit 1; }
+    echo "access point detenido"
 fi
 
 docker-compose down
+echo "Todos los sistemas detenidos"
