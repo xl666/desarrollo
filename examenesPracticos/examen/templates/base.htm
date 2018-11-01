@@ -1,0 +1,56 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5//EN">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="/static/css/estilos.css" rel="stylesheet">
+    {% block head %}{% endblock %}
+  </head>
+  
+  
+  <body style="background-image:url(/static/images/misc/fondoBody.jpg);background-repeat:repeat;">
+    
+    <div class="header">
+      <h1 align="center" id="titulo"><div>{% block tit %}{% endblock %}</div></h1>
+    </div>
+    
+    <div class="fila">
+      
+      
+      <div id="cuerpo" class="col-12">
+	{% block cuerpo %}
+	
+	{% endblock %}
+	
+	<form action="/subir/" method="post" enctype="multipart/form-data">
+	  <fieldset>
+	    <legend>Sube tu respuesta final:</legend>
+	    
+	    {% csrf_token %}
+	    
+	    <div class="fila">
+	      <div class="col-4 etiqueta">Archivo:</div>
+	      <input type="file" name="archivo" value="" class="col-8">
+	    </div>
+	    
+	    <div class="fila">
+	      <div class="col-4"></div>
+	      <input class="col-4"  type="submit" value="Enviar">
+	      <div class="col-4"></div>
+	    </div>
+	  </fieldset>
+	</form> 
+	
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Universidad Veracruzana. Facultad de Estadística e Informática</p>
+    </div>
+    
+  </body>
+</html>
