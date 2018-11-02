@@ -15,10 +15,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-RES_DIR = '/tmp' #debe existir este dir
-servicioNombreHost = 'localhost'
+RES_DIR = 'respuestas/prueba' #debe existir este dir
+servicioNombreHost = '192.168.12.1'
 servicioNombrePort = '9031'
-examenTemplate = 'p1ProgAdmon.html'
+examenTemplate = 'prueba.html'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 

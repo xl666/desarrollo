@@ -27,3 +27,7 @@ services:
     network_mode: "host"
     ports:
       - "8100:8100"
+    volumes:
+      - ./examenesPracticos/examenesPracticos:/code
+
+

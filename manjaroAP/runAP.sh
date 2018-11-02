@@ -14,6 +14,7 @@ echo "Iniciando AP"
 
 echo "Lanzando servicio de nombres..."
 ./runServicioIP.sh &
+pidIP=$!
 
 
 if [ ! $RESTRICTEDMODE ]; then
@@ -72,4 +73,4 @@ iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
 
 echo "Matando servicio de nombres";
-kill $!
+kill $pidIP
