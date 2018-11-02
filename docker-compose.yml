@@ -5,6 +5,7 @@ services:
     network_mode: "host"
     privileged: true
     environment:
+      - RESTRICTEDMODE=true
       - IWIRELESS=wlo1
       - IINTERNET=wlo1
       - ESSID=prueba
@@ -29,5 +30,6 @@ services:
       - "8100:8100"
     volumes:
       - ./examenesPracticos/examenesPracticos:/code
-
-
+    environment:
+      - DIRECTORIO_RESPUESTA=examen1
+      - TEMPLATE_EXAMEN=${TEMPLATE}

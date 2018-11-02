@@ -15,10 +15,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-RES_DIR = 'respuestas/prueba' #debe existir este dir
+RES_DIR = 'respuestas/examen1' #debe existir este dir
 servicioNombreHost = '192.168.12.1'
 servicioNombrePort = '9031'
-examenTemplate = 'prueba.html'
+examenTemplate = 'otro.html'
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 

@@ -59,7 +59,7 @@ def extraerReferenciasURL(url):
         return set(limpios)
 
     except HTTPError as error:
-        print('Hubo un error al obtener datos de URL')
+        print('Hubo un error al obtener datos de URL: %s' % url)
         return []
 
 def regresarDominio(url):
@@ -103,9 +103,9 @@ def procesarUrls(archivo):
     urls = []
     with open(archivo) as paginas:
         for linea in paginas:
-            limpia = linea.strip()
-            if not limpia.endswith('/'):
-                limpia += '/'
+            limpia = linea.strip()            
+            while limpia.endswith('/'):
+                limpia = limpia[:-1]
             urls.append(regresarDominio(limpia))
             urls += extraerReferenciasURL(limpia)
     #ips = hacerDig(set(urls))
