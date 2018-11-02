@@ -22,3 +22,8 @@ services:
     build: ./notificacionesAP
     ports:
       - "8000:8000"
+  examenes_practicos:
+    build: ./examenesPracticos
+    network_mode: "host"
+    ports:
+      - "8100:8100"

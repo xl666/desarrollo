@@ -1,10 +1,10 @@
 
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template.loader import get_template
+from django.template import RequestContext, loader
 from django.shortcuts import render_to_response
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_protect
-from django.template import RequestContext
 from django.shortcuts import render, redirect
 from django.core.files.storage import FileSystemStorage
 import os
@@ -41,7 +41,9 @@ def pedirNombre(ip):
 
 def subir(request):
     if request.method == 'GET':
-        return render(request, settings.examenTemplate)
+        t = loader.get_template(settings.examenTemplate)
+        request_context = RequestContext(request, {})
+        return HttpResponse(t.template.render(request_context))
         
         
     elif request.method == 'POST' and request.FILES['archivo']:
