@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
-python -u manage.py migrate
-python -u manage.py runserver "$1":"$2"
+python3 -u manage.py migrate
+python3 -u manage.py runserver "$1":"$2"
