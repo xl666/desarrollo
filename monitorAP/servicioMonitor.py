@@ -3,32 +3,36 @@
 import socket
 import multiprocessing
 import subprocess
+import re
 import datetime
 import sys
 import time
-from multiprocessing import Queue
 import urllib.request as rq
 from urllib.error import HTTPError
 import urllib.parse as parse
 
-# vuelva en un set el contenido de un Queue compartido
-def volcarCola(cola):
-    res = set([])
-    try:
-        while(True):
-            res.add(cola.get_nowait())
-    except:
-        pass
-    return res
+def arpScan(interface='wlo1', dominio='192.168.12.0/24'):
+    while True:
+        salida = subprocess.Popen(['arp-scan', '--interface=%s' % interface, '--retry=3',dominio], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        texto, error = salida.communicate() # solo stdout
+        if not error:
+            return texto.decode('utf-8')
+
+def filtrarIpsARP(texto):
+    return re.findall('[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', texto)
+
+def ipsARP(interface='wlo1', dominio='192.168.12.0/24'):
+    texto = arpScan(interface, dominio)
+    return set(filtrarIpsARP(texto))
 
 class Monitor(multiprocessing.Process):
-    def __init__(self, clientes, lock, servicioNombreHost='localhost', servicioNombrePort=9031, urlServicioNotificacion='http://localhost:8000', interval=6):
-        self.clientes = clientes
+    def __init__(self, interface, dominio, servicioNombreHost='localhost', servicioNombrePort=9031, urlServicioNotificacion='http://localhost:8000', interval=3):
         self.interval = interval
-        self.lock = lock
         self.servicioNombreHost = servicioNombreHost
         self.servicioNombrePort = servicioNombrePort
         self.urlServicioNotificacion = urlServicioNotificacion
+        self.interface = interface
+        self.dominio = dominio
         multiprocessing.Process.__init__(self)
 
     def imprimirConectados(self, ipsNombres, conectados):
@@ -91,9 +95,7 @@ Numero de clientes: %s
         anterior = set([]) # conjunto de clientes anterior
         while True:
             time.sleep(self.interval)
-            self.lock.acquire()
-            clientesSet = volcarCola(self.clientes)
-            self.lock.release()
+            clientesSet = ipsARP(self.interface, self.dominio)
             for ip in clientesSet:
                 if not ip in conocidos:
                     conocidos.add(ip)
@@ -112,66 +114,13 @@ Numero de clientes: %s
             anterior = clientesSet.copy() # copia
             self.imprimirConectados(ipsNombres, clientesSet)
             
-class Servicio():
-    def __init__(self, clientes, lock, port=9131):        
-        self.port = port
-        self.lock = lock
-        self.clientes = clientes # conjunto que se va a sincronizar
-        
-    def run(self):
-        """
-        crear socket de servicio
-        """
-        mySocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        mySocket.bind(('', int(self.port)))  # binds to any available interface
-        print('recibiendo peticiones en puerto: %s' % self.port)
-        mySocket.listen(20)
-        while True:
-            conn, addr = mySocket.accept()
-            attendThread = WorkThread(conn, addr, self.lock, self.clientes) # se crea un hilo de atención por cliente
-            attendThread.start()
-
-            
-class WorkThread(multiprocessing.Process):  # it is actually a subprocess
-    def __init__(self, conn, addr, lock, clientes):
-        self.conn = conn
-        self.addr = addr
-        self.lock = lock
-        self.clientes = clientes        
-        multiprocessing.Process.__init__(self)
-
-    def run(self):
-        data = ''
-        # Se recibe 1 cosa en la serializacion: IP
-        # El final de la cadena es $$$
-        while not data.endswith('$$$'): # read message
-            chunck = self.conn.recv(1024).decode()
-            data += chunck
-            if not chunck: #finished
-                break
-        if not data:
-            raise RuntimeError("No se transmitieron datos")
-            self.conn.sendall("('API error', 1)$$$".encode())
-            return
-        data = data[:-3] # quitar $$$
-        ip = data.strip()
-        
-        self.lock.acquire()
-        self.clientes.put(ip)
-        self.lock.release()
-        
-        self.conn.close()
-
 
 if __name__ == '__main__':
-    lock = multiprocessing.Lock()
-    clientes = Queue()
-    servicioNombreHost = sys.argv[1]
-    servicioNombrePort = int(sys.argv[2])
-    urlServicioNotificacion = sys.argv[4]
-    monitor = Monitor(clientes, lock, servicioNombreHost, servicioNombrePort, urlServicioNotificacion)
+    interface = sys.argv[1]
+    dominio = sys.argv[2]
+    servicioNombreHost = sys.argv[3]
+    servicioNombrePort = int(sys.argv[4])
+    urlServicioNotificacion = sys.argv[5]
+    monitor = Monitor(interface, dominio, servicioNombreHost, servicioNombrePort, urlServicioNotificacion)
     monitor.start()
-    puerto = int(sys.argv[3])
-    servicio = Servicio(clientes, lock, puerto)
-    servicio.run()
     
