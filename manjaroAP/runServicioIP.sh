@@ -9,10 +9,17 @@ function nombreAP() {
 	local instancias="$(/bin/bash -c 'create_ap --list-running')"
 	deInter="$(echo $instancias | grep $IWIRELESS)"
 	if [ "$deInter" ]; then
-	    local apAux="${deInter#*$IWIRELESS (}";
-	    local ap="${apAux%)}";
-	    echo $ap;
-	    return
+	    parentesis="$(echo $deInter | grep '(')" #no se soportan interfaces virtuales
+	    if [ ! "$parentesis" ]; then
+		local ap=$IWIRELESS
+		echo $IWIRELESS
+		return
+	    else
+		local apAux="${deInter#*$IWIRELESS (}";
+		local ap="${apAux%)}";
+		echo $ap;
+		return
+	    fi
 	fi
 	sleep 2;
     done

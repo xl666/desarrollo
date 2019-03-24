@@ -6,8 +6,8 @@ services:
     privileged: true
     environment:
       - RESTRICTEDMODE=true
-      - IWIRELESS=wlo1
-      - IINTERNET=wlp0s20f0u2
+      - IWIRELESS=wlp0s20f0u2
+      - IINTERNET=wlo1
       - ESSID=prueba
       - PASS=12345678
       - ALUMNSMACS=${MACS}
@@ -21,8 +21,7 @@ services:
       - DOMINIO_SERVICIO_NOMBRES=192.168.12.1
       - PUERTO_SERVICIO_NOMBRES=9031
       - URL_SERVICIO_NOTIFICACION=http://localhost:8000/guardarMensaje
-      - INTERFACE=ap0
-      - DOMINIO=192.168.12.0/24
+      - INTERFACE=wlp0s20f0u2
   notificaciones:
     build: ./notificacionesAP
     ports:

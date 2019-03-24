@@ -11,28 +11,51 @@ import urllib.request as rq
 from urllib.error import HTTPError
 import urllib.parse as parse
 
-def arpScan(interface='wlo1', dominio='192.168.12.0/24'):
+def iwScan(interface='wlo1'):
     while True:
-        salida = subprocess.Popen(['arp-scan', '--interface=%s' % interface, '--retry=3',dominio], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        salida = subprocess.Popen(['iw', 'dev', interface, 'station', 'dump'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         texto, error = salida.communicate() # solo stdout
         if not error:
             return texto.decode('utf-8')
 
-def filtrarIpsARP(texto):
-    return re.findall('[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}', texto)
+def filtrarMacsIw(texto):
+    return re.findall('[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}:[a-f0-9]{2}', texto)
 
-def ipsARP(interface='wlo1', dominio='192.168.12.0/24'):
-    texto = arpScan(interface, dominio)
-    return set(filtrarIpsARP(texto))
+def getArpaInfo(interface='ap0'):
+    comando = 'arp -an -i %s' % interface
+    entradas = subprocess.Popen(comando.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.read().decode('utf-8')
+    if entradas.startswith('arp:'): #las invalidas empiezan asi
+        return []
+    return entradas.split('\n')[:-1]
+
+def getIPMacsConectados(interface='ap0'):
+    clientes = getArpaInfo(interface)
+    aux = []
+    #obtener macs e IPs
+    for c in clientes:
+        if c:
+            partes = c.split()
+            aux.append((partes[3].strip(), partes[1].strip()[1:-1]))
+    return aux
+
+def ipsIw(interface='wlo1'):
+    scans = iwScan(interface)
+    macsConectadas = filtrarMacsIw(scans)
+    macsIps = getIPMacsConectados(interface)
+    dMacs = dict(macsIps)
+    resultado = []
+    for mac in macsConectadas:
+        if mac in dMacs:
+            resultado.append(dMacs[mac])
+    return set(resultado)
 
 class Monitor(multiprocessing.Process):
-    def __init__(self, interface, dominio, servicioNombreHost='localhost', servicioNombrePort=9031, urlServicioNotificacion='http://localhost:8000', interval=3):
+    def __init__(self, interface, servicioNombreHost='localhost', servicioNombrePort=9031, urlServicioNotificacion='http://localhost:8000', interval=3):
         self.interval = interval
         self.servicioNombreHost = servicioNombreHost
         self.servicioNombrePort = servicioNombrePort
         self.urlServicioNotificacion = urlServicioNotificacion
         self.interface = interface
-        self.dominio = dominio
         multiprocessing.Process.__init__(self)
 
     def imprimirConectados(self, ipsNombres, conectados):
@@ -95,7 +118,7 @@ Numero de clientes: %s
         anterior = set([]) # conjunto de clientes anterior
         while True:
             time.sleep(self.interval)
-            clientesSet = ipsARP(self.interface, self.dominio)
+            clientesSet = ipsIw(self.interface)
             for ip in clientesSet:
                 if not ip in conocidos:
                     conocidos.add(ip)
@@ -117,10 +140,9 @@ Numero de clientes: %s
 
 if __name__ == '__main__':
     interface = sys.argv[1]
-    dominio = sys.argv[2]
-    servicioNombreHost = sys.argv[3]
-    servicioNombrePort = int(sys.argv[4])
-    urlServicioNotificacion = sys.argv[5]
-    monitor = Monitor(interface, dominio, servicioNombreHost, servicioNombrePort, urlServicioNotificacion)
+    servicioNombreHost = sys.argv[2]
+    servicioNombrePort = int(sys.argv[3])
+    urlServicioNotificacion = sys.argv[4]
+    monitor = Monitor(interface, servicioNombreHost, servicioNombrePort, urlServicioNotificacion)
     monitor.start()
     
