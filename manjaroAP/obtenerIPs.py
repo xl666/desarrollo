@@ -111,7 +111,8 @@ def procesarUrls(archivo):
     #ips = hacerDig(set(urls))
     ips = set(urls)
     for ip in ips:
-        sacarReglaIPTables(ip)
+        if ip:
+            sacarReglaIPTables(ip)
 
         
 procesarUrls(sys.argv[1])

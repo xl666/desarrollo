@@ -32,7 +32,7 @@ iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
 
-if [ $WHITEURLS ]; then
+if [ "$WHITEURLS" ]; then
     echo "Creando reglas whitelist";
     echo "$WHITEURLS" > /tmp/whiteList.txt;
     python -u ./obtenerIPs.py /tmp/whiteList.txt > /tmp/reglas || { echo "No se pudo establecer whitelist"; exit 1; }
