@@ -111,7 +111,7 @@ def procesarUrls(archivo):
     #ips = hacerDig(set(urls))
     ips = set(urls)
     for ip in ips:
-        if ip:
+        if ip and not '-->' in ip and not 'message returned is:' in ip:
             sacarReglaIPTables(ip)
 
         

@@ -4,7 +4,7 @@ from notificacionesAP import settings
 def bitacora(request):
     pop = """
     num = Math.random() * 800;
-    window.open("/ultimoMensaje/", "AVISO"+ num,"resizable=no,toolbar=no,scrollbars=no,menubar=no,status=no,directories=n o,width="+300+",height="+300+",left="+num+",top="+100+"");
+    window.open("/ultimoMensaje/", "AVISO"+ num,"resizable=no,toolbar=no,scrollbars=no,menubar=no,status=no,directories=n o,width="+500+",height="+500+",left="+num+",top="+100+"");
     """
     if not settings.ultimo:
         pop = ''
@@ -39,7 +39,14 @@ def ultimoMensaje(request):
     if settings.ultimo:
         aux = settings.ultimo
         settings.ultimo = ''
-        return HttpResponse(aux)
+        contenido ='''
+        <html>
+           <body style="background-color:black;color:white;">
+              %s
+           </body>
+        </html>
+        '''
+        return HttpResponse(contenido % aux)
     return HttpResponse('')
 
 def guardarMensaje(request):
