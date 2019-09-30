@@ -24,10 +24,6 @@ environ.Env.read_env(env_file)
 
 ACTIVO = True #para saber si el examen esta activo o no, todas las vistas lo deben comprobar
 
-HOST_MONITOR = 'localhost' # host del servicio de monitoreo de cambio de ventana
-
-PUERTO_MONITOR = 9030 # para monitoreo cuando cambian d eventana
-
 
 #ID_EXAMEN = 40
 ID_EXAMEN = 41

@@ -20,6 +20,7 @@ ENV DATABASE_USER=""
 ENV DATABASE_PASSWORD=""
 ENV DATABASE_HOST=""
 ENV DATABASE_PORT=3306
+ENV URL_SERVICIO_NOTIFICACION="http://localhost:8000/guardarMensaje"
 
 COPY iniciarServidor.sh "/system"
 RUN chmod 755 "/system/iniciarServidor.sh"

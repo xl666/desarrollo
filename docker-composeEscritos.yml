@@ -10,6 +10,10 @@ services:
       - ./examenesEscritos/examenesEscritos:/code
     depends_on:
       - bd
+  notificaciones:
+    build: ./notificacionesAP
+    ports:
+      - "8000:8000"
   bd:
     image: mariadb
     restart: always

@@ -25,7 +25,7 @@ SECRET_KEY = '$+isrd81%8_tqq4y*vue$068u&is=45%(dop$1--uarvz71903'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.12.1', 'localhost']
+ALLOWED_HOSTS = ['*', 'localhost']
 
 # Application definition
 

@@ -11,7 +11,10 @@ import examenesEscritos.xml.examen as xmlExamen
 import examenesEscritos.xml.subrayar as xmlSubrayar
 from examenesEscritos import settings
 import datetime
-import socket
+import os
+import urllib.request as rq
+from urllib.error import HTTPError
+import urllib.parse as parse
 
 
 
@@ -258,16 +261,10 @@ def examen(request):
 # vista con la funcionalidad de monitoreo
 def monitoreo(request):
     if request.method == 'GET':
-        host = settings.HOST_MONITOR
-        port = settings.PUERTO_MONITOR
         caso = request.GET.get('caso', '')
-        mySocket = socket.socket()
-        mySocket.connect((host,port))
         nombre = request.session.get('nombre', 'anonimo')
         message = '%s %s de ventana' % (nombre, caso)
-        mySocket.sendall(message.encode())
-        mySocket.sendall('$$$'.encode())                 
-        mySocket.close()
+        notificar(message)
         
     return HttpResponse('')
 
@@ -303,3 +300,19 @@ def regresarPendiente(request):
         request.session['pendientes'] = pendientes
 
     return redirect('/examen/')
+
+
+def notificar(mensaje):
+    fecha = datetime.datetime.now()
+    hora =  'Hora: %s:%s:%s\n' % (fecha.hour, fecha.minute, fecha.second)
+        
+    mensaje = parse.quote(hora + mensaje)
+    
+    url = '%s?mensaje=%s' % (os.environ.get('URL_SERVICIO_NOTIFICACION'), mensaje)
+    cabeceras = {'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'}
+    request = rq.Request(url, headers=cabeceras)
+    try:
+        respuesta = rq.urlopen(request)
+        respuesta.read() # obligar feed
+    except :
+        print('No es posible contactar con el servicio de notificaciones')
