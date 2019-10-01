@@ -1,2 +1,8 @@
 *.sh~
 *.yml~
+*.pyc
+*.js\#
+*\#
+*~
+/data/
+*pyc

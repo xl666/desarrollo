@@ -54,13 +54,15 @@ ALLOWED_HOSTS = ['*', '192.168.12.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'modelo',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'modelo',
+    'reset_migrations',
+
 ]
 
 MIDDLEWARE = [

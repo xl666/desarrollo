@@ -21,6 +21,8 @@ services:
       - examenesEscritos/bd.env
     volumes:
       - ./data:/var/lib/mysql
+    ports:
+      - "9999:3306"
 
   nginx:
     image: nginx
