@@ -1,0 +1,36 @@
+version: '3'
+services:
+  examenes_escritos:
+    env_file:
+      - examenesEscritos/app.env
+    build: ./examenesEscritos
+    restart: always
+    container_name: examenesEscritos
+    volumes:
+      - ./examenesEscritos/examenesEscritos:/code
+    depends_on:
+      - bd
+  notificaciones:
+    build: ./notificacionesAP
+    ports:
+      - "8000:8000"
+  bd:
+    image: mariadb
+    restart: always
+    env_file:
+      - examenesEscritos/bd.env
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "9999:3306"
+
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - 9995:80
+    volumes:
+      - ./nginx/nginx/conf.d:/etc/nginx/conf.d
+      - ./examenesEscritos/examenesEscritos/examenesEscritos/static:/static
+    depends_on:  
+      - examenes_escritos

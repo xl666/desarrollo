@@ -20,10 +20,10 @@ pidIP=$!
 if [ ! $RESTRICTEDMODE ]; then
     if [ $FORCECHANNEL ]; then
 	forzarCanal
-	create_ap -c $CHANNEL "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS";
+	create_ap  -d -c $CHANNEL "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS";
 	exit 0;
     fi
-    create_ap  "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS";
+    create_ap -d  "$IWIRELESS" "$IINTERNET" "$ESSID" "$PASS";
     exit 0;
 fi
 
@@ -32,7 +32,7 @@ iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
 
-if [ $WHITEURLS ]; then
+if [ "$WHITEURLS" ]; then
     echo "Creando reglas whitelist";
     echo "$WHITEURLS" > /tmp/whiteList.txt;
     python -u ./obtenerIPs.py /tmp/whiteList.txt > /tmp/reglas || { echo "No se pudo establecer whitelist"; exit 1; }
@@ -57,10 +57,10 @@ if [ $RESTRICTMAC ]; then
     for entrada in $(cat "/tmp/macs.txt"); do
 	echo ${entrada%,*} >> /tmp/macsLimpias.txt
     done
-    create_ap --mac-filter --mac-filter-accept /tmp/macsLimpias.txt -c $CHANNEL  $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns 192.168.12.1			
+    create_ap -d --mac-filter --mac-filter-accept /tmp/macsLimpias.txt -c $CHANNEL  $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns 192.168.12.1			
 
 else
-    create_ap   -c $CHANNEL $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns 192.168.12.1
+    create_ap -d   -c $CHANNEL $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns 192.168.12.1
 fi
 
 echo "Haciendo limpieza de firewall";

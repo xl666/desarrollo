@@ -1,7 +1,7 @@
 
-FROM jonathonf/manjaro
+FROM archlinux/base
 RUN pacman -Syy \  
-    && pacman -S --noconfirm grep which create_ap gawk glibc wireless_tools net-tools \
+    && pacman -S --noconfirm grep which create_ap gawk glibc wireless_tools net-tools nettle python\
     && rm -rf /var/cache/pacman/pkg/*
 ENV IWIRELESS wlo1 # interfaz donde estará el AP
 ENV IINTERNET wlo1 

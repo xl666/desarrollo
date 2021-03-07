@@ -63,11 +63,9 @@ def extraerReferenciasURL(url):
         return []
 
 def regresarDominio(url):
-    patron = r".*?//(.*?)/.*?"
-    c = re.compile(patron, re.DOTALL)
-    res = c.findall(url)
-    if res:
-        return res[0]
+    domain = url.split("://")[1].split("/")[0]
+    if domain:
+        return domain
     return ''
     
 
@@ -111,7 +109,8 @@ def procesarUrls(archivo):
     #ips = hacerDig(set(urls))
     ips = set(urls)
     for ip in ips:
-        sacarReglaIPTables(ip)
+        if ip and not '-->' in ip and not 'message returned is:' in ip:
+            sacarReglaIPTables(ip)
 
         
 procesarUrls(sys.argv[1])

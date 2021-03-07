@@ -6,19 +6,22 @@ services:
     privileged: true
     environment:
       - RESTRICTEDMODE=true
-      - IWIRELESS=wlo1
+      - IWIRELESS=wlp0s20f0u2
       - IINTERNET=wlo1
       - ESSID=prueba
       - PASS=12345678
       - ALUMNSMACS=${MACS}
       - WHITEURLS=${WHITES}
-      - FORCECHANNEL=true
       - CHANNEL=1
+      - IPSERVICEPORT=9031
   monitor:
     build: ./monitorAP
     network_mode: "host"
-    ports:
-      - "9595:9595"
+    environment:
+      - DOMINIO_SERVICIO_NOMBRES=192.168.12.1
+      - PUERTO_SERVICIO_NOMBRES=9031
+      - URL_SERVICIO_NOTIFICACION=http://localhost:8000/guardarMensaje
+      - INTERFACE=wlp0s20f0u2
   notificaciones:
     build: ./notificacionesAP
     ports:
@@ -33,3 +36,32 @@ services:
     environment:
       - DIRECTORIO_RESPUESTA=examen1
       - TEMPLATE_EXAMEN=${TEMPLATE}
+  examenes_escritos:
+    env_file:
+      - examenesEscritos/app.env
+    build: ./examenesEscritos
+    restart: always
+    container_name: examenesEscritos
+    volumes:
+      - ./examenesEscritos/examenesEscritos:/code
+    depends_on:
+      - bd
+  bd:
+    image: mariadb
+    restart: always
+    env_file:
+      - examenesEscritos/bd.env
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - "9999:3306"
+  nginx:
+    image: nginx
+    restart: always
+    ports:
+      - 9995:80
+    volumes:
+      - ./nginx/nginx/conf.d:/etc/nginx/conf.d
+      - ./examenesEscritos/examenesEscritos/examenesEscritos/static:/static
+    depends_on:  
+      - examenes_escritos
