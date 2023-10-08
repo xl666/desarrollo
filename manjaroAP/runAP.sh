@@ -32,6 +32,7 @@ iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
 
+
 if [ "$WHITEURLS" ]; then
     echo "Creando reglas whitelist";
     echo "$WHITEURLS" > /tmp/whiteList.txt;
@@ -41,7 +42,7 @@ fi
 
 iptables -A FORWARD -d 192.168.12.1  -j ACCEPT
 iptables -A FORWARD -s 192.168.12.1  -j ACCEPT
-iptables -A FORWARD -j REJECT
+iptables -A FORWARD -j DROP
 
 #forzar trabajo en channel 1
 #cuidado, algunos adaptadores no se vuelven a encender
@@ -60,7 +61,7 @@ if [ $RESTRICTMAC ]; then
     create_ap -d --mac-filter --mac-filter-accept /tmp/macsLimpias.txt -c $CHANNEL  $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns 192.168.12.1			
 
 else
-    create_ap -d   -c $CHANNEL $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns 192.168.12.1
+    create_ap -d   -c $CHANNEL $IWIRELESS lo "$ESSID" "$PASS" --isolate-clients --dhcp-dns "192.168.12.1"
 fi
 
 echo "Haciendo limpieza de firewall";

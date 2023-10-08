@@ -1,6 +1,5 @@
 #!/bin/bash
 
-echo "exitooo" > /tmp/ap.txt
 [[ $ALUMNSMACS ]] || exit 1 #no tiene sentido lanzar servicio sin macs
 #tratar de obtener nombre ap
 function nombreAP() {

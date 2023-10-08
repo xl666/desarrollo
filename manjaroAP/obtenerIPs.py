@@ -12,10 +12,19 @@ import sys
 import subprocess
 
 
-BAD_LIST = ['facebook', 'whatsapp', 'telegram', 'twitter', 'skype', 'plus.google']
+BAD_LIST = ['facebook', 'whatsapp', 'telegram', 'twitter', 'skype', 'plus.google', 'youtube', 'github', 'instagram', 'cloud.google.com', 'play.google.com', 'patreon.com', 'linkedin.com', 'discord', 'groups.google.com', 'x.com']
+
+BAD_SYMS = ['(', ')', '=', '#', '$', '"', "'"]
 
 def limpio(elemento):
     for malo in BAD_LIST:
+        if malo in elemento:
+            return False
+    if len(elemento) > 40:
+        return False
+    if not '.' in elemento:
+        return False
+    for malo in BAD_SYMS:
         if malo in elemento:
             return False
     return True
@@ -59,11 +68,13 @@ def extraerReferenciasURL(url):
         return set(limpios)
 
     except HTTPError as error:
-        print('Hubo un error al obtener datos de URL: %s' % url)
-        return []
+        #print('Hubo un error al obtener datos de URL: %s' % url)
+        return [regresarDominio(url)]
 
 def regresarDominio(url):
-    domain = url.split("://")[1].split("/")[0]
+    if not url:
+        return ''
+    domain = url.strip().split("://")[1].split("/")[0]
     if domain:
         return domain
     return ''
